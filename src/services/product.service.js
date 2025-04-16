@@ -127,10 +127,12 @@ const getProductsByKeyword = async (requestQuery) => {
       {
         path: 'shop',
         select: 'fullname email phone description address avatar background slug',
+        strictPopulate: false,
       },
       {
         path: 'category',
         select: 'name slug image',
+        strictPopulate: false,
       },
     ])
     .skip(skip)

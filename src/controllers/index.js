@@ -1,0 +1,17 @@
+module.exports.chatController = require('./chat.controller');
+module.exports.userController = require('./user.controller');
+module.exports.baseController = require('./base.controller');
+module.exports.shopController = require('./shop.controller');
+module.exports.authController = require('./auth.controller');
+module.exports.cartController = require('./cart.controller');
+module.exports.orderController = require('./order.controller');
+module.exports.reviewController = require('./review.controller');
+module.exports.messageController = require('./message.controller');
+module.exports.captchaController = require('./captcha.controller');
+module.exports.productController = require('./product.controller');
+module.exports.contactController = require('./contact.controller');
+module.exports.chatBotConterller = require('./chat-bot.controller');
+module.exports.categoryController = require('./category.controller');
+module.exports.dashboardController = require('./dashboard.controller');
+module.exports.cartDetailController = require('./cart-detail.controller');
+module.exports.conversationController = require('./conversation.controller');

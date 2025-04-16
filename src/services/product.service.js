@@ -127,17 +127,18 @@ const getProductsByKeyword = async (requestQuery) => {
       {
         path: 'shop',
         select: 'fullname email phone description address avatar background slug',
-        strictPopulate: false,
+        options: { lean: true },
       },
       {
         path: 'category',
         select: 'name slug image',
-        strictPopulate: false,
+        options: { lean: true },
       },
     ])
     .skip(skip)
     .limit(limit)
-    .sort(sortObject);
+    .sort(sortObject)
+    .lean();
 
   const totalSearch = await Product.countDocuments(query);
 

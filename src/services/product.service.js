@@ -139,15 +139,17 @@ const getProductsByKeyword = async (requestQuery) => {
 
   const totalSearch = await Product.countDocuments(query);
 
+  const cleanProducts = products.filter(Boolean);
+
   const detailResult = {
     limit: +limit,
     totalResult: totalSearch,
     totalPage: Math.ceil(totalSearch / +limit),
     currentPage: +page,
-    currentResult: products.length,
+    currentResult: cleanProducts.length,
   };
 
-  const results = { products, ...detailResult };
+  const results = { products: cleanProducts, ...detailResult };
 
   cacheService.set(key, results);
 

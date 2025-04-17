@@ -148,7 +148,7 @@ const createOrder = async (user, orderBody) => {
     emailData: {
       emails: user.email,
       subject: EMAIL_SUBJECT.ORDER_PENDING,
-      linkDetail: `${URL_FRONTEND[env.nodeEnv]}/auth/profile`,
+      linkDetail: `${URL_FRONTEND[env.nodeEnv]}/vi/auth/profile`,
     },
     type: EMAIL_TYPES.ORDER_PENDING,
   });
@@ -225,7 +225,7 @@ const cancelOrderByIdUser = async (orderId, user) => {
     emailData: {
       emails: user.email,
       subject: EMAIL_SUBJECT.ORDER_CANCELED,
-      linkDetail: `${URL_FRONTEND[env.nodeEnv]}/auth/profile`,
+      linkDetail: `${URL_FRONTEND[env.nodeEnv]}/vi/auth/profile`,
     },
     type: EMAIL_TYPES.ORDER_CANCELED,
   });
@@ -260,7 +260,7 @@ const cancelOrderByIdShop = async (orderId, shop) => {
     emailData: {
       emails: user.email,
       subject: EMAIL_SUBJECT.ORDER_CANCELED,
-      linkDetail: `${URL_FRONTEND[env.nodeEnv]}/auth/profile`,
+      linkDetail: `${URL_FRONTEND[env.nodeEnv]}/vi/auth/profile`,
     },
     type: EMAIL_TYPES.ORDER_CANCELED,
   });
@@ -315,7 +315,7 @@ const updateOrderStatusById = async (orderId, shop, status) => {
     emailData: {
       emails: user.email,
       subject,
-      linkDetail: `${URL_FRONTEND[env.nodeEnv]}/auth/profile`,
+      linkDetail: `${URL_FRONTEND[env.nodeEnv]}/vi/auth/profile`,
     },
     type: `order-${status}`,
   });

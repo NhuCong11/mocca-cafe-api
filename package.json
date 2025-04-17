@@ -13,7 +13,7 @@
     "type": "git",
     "url": "github.com/NhuCong11/mocca-cafe-api.git"
   },
-  "author": "nhucong03.id.vn",
+  "author": "mocca.io.vn",
   "license": "ISC",
   "dependencies": {
     "@google/generative-ai": "^0.20.0",

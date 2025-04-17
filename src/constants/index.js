@@ -22,7 +22,7 @@ const LOGO_QRCODE_NAME = 'logo-qrcode.jpg';
 
 const LOGO_SIZE = 320;
 
-const HOST_NAME = 'nhucong03.id.vn';
+const HOST_NAME = 'mocca.io.vn';
 
 const LOGO_MARGIN = 4;
 
@@ -37,12 +37,12 @@ const LOG_DIR = 'logs';
 const LOG_FILENAME = 'logger.log';
 
 const URL_HOST = {
-  production: 'https://api.nhucong03.id.vn',
+  production: 'https://api.mocca.io.vn',
   development: 'http://localhost:5000',
 };
 
 const URL_FRONTEND = {
-  production: 'https://nhucong03.id.vn',
+  production: 'https://mocca.io.vn',
   development: 'http://localhost:3000',
 };
 

@@ -303,6 +303,9 @@ const updateOrderStatusById = async (orderId, shop, status) => {
       if (order.status !== 'shipping') {
         throw new ApiError(httpStatus.BAD_REQUEST, orderMessage().UNABLE_TO_COMPLETE_ORDER);
       }
+      if (order.paymentStatus === 'unpaid') {
+        order.paymentStatus = 'paid';
+      }
       break;
     default:
       throw new ApiError(httpStatus.BAD_REQUEST, orderMessage().INVALID_ORDER_STATUS);

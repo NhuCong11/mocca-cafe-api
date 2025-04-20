@@ -28,6 +28,9 @@ const renderQR = catchAsync(async (req, res) => {
   res.writeHead(200, {
     'Content-Type': 'image/png',
     'Content-Length': buffer.length,
+    'Cache-Control': 'no-cache, no-store, must-revalidate',
+    Pragma: 'no-cache',
+    Expires: '0',
   });
 
   res.end(buffer);

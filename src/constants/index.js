@@ -18,7 +18,7 @@ const QUEUE_TYPES = {
 
 const CODE_VERIFY_2FA_SUCCESS = [0, 2];
 
-const LOGO_QRCODE_NAME = 'logo-qrcode.jpg';
+const LOGO_QRCODE_NAME = 'logo-qrcode.png';
 
 const LOGO_SIZE = 320;
 

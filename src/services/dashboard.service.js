@@ -231,7 +231,7 @@ const statisticalPerformance = async (reqBody, user) => {
 };
 
 const getTopSellingProducts = async (user) => {
-  const cacheKey = `${keyDashboard}:topSellingProducts:${user.role}:${user.shopId || 'all'}`;
+  const cacheKey = `${keyDashboard}:topSellingProducts:${user.role}:${user._id || 'all'}`;
   const resultCache = await cacheService.get(cacheKey);
 
   if (resultCache) return resultCache;
@@ -240,8 +240,8 @@ const getTopSellingProducts = async (user) => {
     status: 'success',
   };
 
-  if (user.role === 'shop' && user.shopId) {
-    matchCondition.shop = user.shopId;
+  if (user.role === 'shop') {
+    matchCondition.shop = user._id;
   }
 
   const result = await Order.aggregate([
@@ -275,7 +275,7 @@ const getTopSellingProducts = async (user) => {
     },
     {
       $match: {
-        'productInfo.shop': user.role === 'shop' && user.shopId ? user.shopId : { $exists: true },
+        'productInfo.shop': user.role === 'shop' ? user._id : { $exists: true },
       },
     },
     {

@@ -93,7 +93,7 @@ const statisticalData = async (reqBody, user) => {
     },
   };
 
-  if (user.role !== 'admin' && user.shopId) {
+  if (user.role === 'shop' && user.shopId) {
     matchCondition.shopId = user.shopId;
   }
 

@@ -15,6 +15,6 @@ router.use('/shops', shopRoute);
 router.use('/products', productRoute);
 router.use('/orders', orderRoute);
 router.use('/contacts', contactRoute);
-router.use('/dashboard', dashboardRoute);
+router.use('/dashboards', dashboardRoute);
 
 module.exports = router;

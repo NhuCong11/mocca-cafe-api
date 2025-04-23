@@ -162,6 +162,11 @@ const statisticalRevenue = async (reqBody) => {
   const endDate = new Date();
   const startDate = new Date(endDate);
   switch (statisticalBy) {
+    case 'day':
+      return statisticalRevenueByDay(
+        new Date(endDate.getFullYear(), endDate.getMonth(), endDate.getDate() - 6),
+        new Date(endDate.getFullYear(), endDate.getMonth(), endDate.getDate()),
+      );
     case 'week':
       return statisticalRevenueByDay(
         new Date(endDate.getFullYear(), endDate.getMonth(), endDate.getDate() - endDate.getDay() + 1),

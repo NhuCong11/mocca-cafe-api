@@ -274,6 +274,11 @@ const getTopSellingProducts = async (user) => {
       $unwind: '$productInfo',
     },
     {
+      $match: {
+        'productInfo.shop': user.role === 'shop' && user.shopId ? user.shopId : { $exists: true },
+      },
+    },
+    {
       $group: {
         _id: '$cartDetailInfo.product',
         name: { $first: '$productInfo.name' },

@@ -18,4 +18,8 @@ chatRouter
   .route('/statistical-performance')
   .post(auth, authorize(['shop', 'admin']), dashboardController.statisticalPerformance);
 
+chatRouter
+  .route('/top-selling-products')
+  .get(auth, authorize(['shop', 'admin']), dashboardController.getTopSellingProducts);
+
 module.exports = chatRouter;

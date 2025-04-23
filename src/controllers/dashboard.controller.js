@@ -25,9 +25,15 @@ const statisticalPerformance = catchAsync(async (req, res) => {
   res.status(httpStatus.OK).json(response(httpStatus.OK, dashboardMessage().STATISTICAL_PERFORMANCE, result));
 });
 
+const getTopSellingProducts = catchAsync(async (req, res) => {
+  const result = await dashboardService.getTopSellingProducts(req.user);
+  res.status(httpStatus.OK).json(response(httpStatus.OK, dashboardMessage().TOP_SELLING_PRODUCTS, result));
+});
+
 module.exports = {
   statisticalUserByRole,
   statisticalData,
   statisticalRevenue,
   statisticalPerformance,
+  getTopSellingProducts,
 };

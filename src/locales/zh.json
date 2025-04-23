@@ -1,0 +1,9 @@
+{
+  "dashboard": {
+    "statisticalData": "统计数据成功",
+    "statisticalRevenue": "统计收入成功",
+    "statisticalPerformance": "统计性能成功",
+    "statisticalUserByRole": "按角色统计用户成功",
+    "topSellingProducts": "获取最畅销产品成功"
+  }
+}

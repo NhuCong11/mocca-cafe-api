@@ -1,4 +1,4 @@
-const { User, Order, Contact } = require('../models');
+const { User, Order, Contact, Product } = require('../models');
 const cacheService = require('../services/cache.service');
 const {
   statisticalRevenueByDay,
@@ -230,4 +230,67 @@ const statisticalPerformance = async (reqBody, user) => {
   }
 };
 
-module.exports = { statisticalUserByRole, statisticalData, statisticalRevenue, statisticalPerformance };
+const getTopSellingProducts = async (user) => {
+  const cacheKey = `${keyDashboard}:topSellingProducts:${user.role}:${user.shopId || 'all'}`;
+  const resultCache = await cacheService.get(cacheKey);
+
+  if (resultCache) return resultCache;
+
+  const matchCondition = {};
+  if (user.role === 'shop' && user.shopId) {
+    matchCondition.shopId = user.shopId;
+  }
+
+  const result = await Order.aggregate([
+    {
+      $match: matchCondition,
+    },
+    {
+      $unwind: '$products',
+    },
+    {
+      $group: {
+        _id: '$products.productId',
+        totalQuantity: { $sum: '$products.quantity' },
+        totalRevenue: { $sum: { $multiply: ['$products.price', '$products.quantity'] } },
+      },
+    },
+    {
+      $lookup: {
+        from: 'products',
+        localField: '_id',
+        foreignField: '_id',
+        as: 'productInfo',
+      },
+    },
+    {
+      $unwind: '$productInfo',
+    },
+    {
+      $project: {
+        _id: 1,
+        name: '$productInfo.name',
+        image: '$productInfo.image',
+        totalQuantity: 1,
+        totalRevenue: 1,
+      },
+    },
+    {
+      $sort: { totalQuantity: -1 },
+    },
+    {
+      $limit: 5,
+    },
+  ]);
+
+  cacheService.set(cacheKey, result);
+  return result;
+};
+
+module.exports = {
+  statisticalUserByRole,
+  statisticalData,
+  statisticalRevenue,
+  statisticalPerformance,
+  getTopSellingProducts,
+};

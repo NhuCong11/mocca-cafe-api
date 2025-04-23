@@ -99,8 +99,11 @@ const getProductsByKeyword = async (requestQuery) => {
 
   const sortObject = Object.assign(...sort);
 
-  const query = {
-    $and: [
+  const query = {};
+
+  // Add keyword search condition if keyword is provided
+  if (keyword && keyword.trim() !== '') {
+    query.$and = [
       {
         $or: [
           { name: { $regex: new RegExp(keyword, 'i') } },
@@ -108,14 +111,18 @@ const getProductsByKeyword = async (requestQuery) => {
           { description: { $regex: new RegExp(keyword, 'i') } },
         ],
       },
-    ],
-  };
+    ];
+  }
 
+  // Add shop filter if provided
   if (shop) {
+    if (!query.$and) query.$and = [];
     query.$and.push({ shop });
   }
 
+  // Add category filter if provided
   if (category) {
+    if (!query.$and) query.$and = [];
     query.$and.push({ category });
   }
 

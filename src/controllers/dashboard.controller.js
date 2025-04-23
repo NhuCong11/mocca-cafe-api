@@ -11,7 +11,7 @@ const statisticalUserByRole = catchAsync(async (req, res) => {
 });
 
 const statisticalData = catchAsync(async (req, res) => {
-  const result = await dashboardService.statisticalData(req.body);
+  const result = await dashboardService.statisticalData(req.body, req.user);
   res.status(httpStatus.OK).json(response(httpStatus.OK, dashboardMessage().STATISTICAL_DATA, result));
 });
 

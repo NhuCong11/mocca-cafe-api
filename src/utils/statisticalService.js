@@ -1,20 +1,26 @@
 const { Order, DailyAccess } = require('../models');
 const cacheService = require('../services/cache.service');
 
-const statisticalRevenueByDay = async (startDate, endDate) => {
-  const cacheKey = `${startDate}:${endDate}:statisticalRevenueByDay`;
+const statisticalRevenueByDay = async (startDate, endDate, user) => {
+  const cacheKey = `${user.role}:${user.shopId || 'all'}:${startDate}:${endDate}:statisticalRevenueByDay`;
   const resultCache = await cacheService.get(cacheKey);
   if (resultCache) return resultCache;
 
   const allDates = generateDateRange(startDate, endDate);
+  const matchCondition = {
+    createdAt: {
+      $gte: new Date(startDate),
+      $lte: new Date(endDate),
+    },
+  };
+
+  if (user.role === 'shop' && user.shopId) {
+    matchCondition.shopId = user.shopId;
+  }
+
   const pipeline = [
     {
-      $match: {
-        createdAt: {
-          $gte: new Date(startDate),
-          $lte: new Date(endDate),
-        },
-      },
+      $match: matchCondition,
     },
     {
       $group: {
@@ -55,20 +61,26 @@ const mergeRevenueWithAllDates = (revenueByDay) => {
   return result;
 };
 
-const statisticalRevenueByMonth = async (startMonth, endMonth) => {
-  const cacheKey = `${startMonth}:${endMonth}:statisticalRevenueByMonth`;
+const statisticalRevenueByMonth = async (startMonth, endMonth, user) => {
+  const cacheKey = `${user.role}:${user.shopId || 'all'}:${startMonth}:${endMonth}:statisticalRevenueByMonth`;
   const resultCache = await cacheService.get(cacheKey);
   if (resultCache) return resultCache;
 
   const allWeeks = generateWeekRangeForMonths(startMonth, endMonth);
+  const matchCondition = {
+    createdAt: {
+      $gte: new Date(startMonth),
+      $lte: new Date(endMonth),
+    },
+  };
+
+  if (user.role === 'shop' && user.shopId) {
+    matchCondition.shopId = user.shopId;
+  }
+
   const pipelineByWeek = [
     {
-      $match: {
-        createdAt: {
-          $gte: new Date(startMonth),
-          $lte: new Date(endMonth),
-        },
-      },
+      $match: matchCondition,
     },
     {
       $group: {
@@ -124,22 +136,28 @@ const getISOWeekNumber = (date) => {
   return weekNo;
 };
 
-const statisticalRevenueByQuarter = async (year) => {
+const statisticalRevenueByQuarter = async (year, user) => {
   const startDate = new Date(`${year}-01-01`);
   const endDate = new Date(`${year}-12-31`);
-  const cacheKey = `${year}:statisticalRevenueByYear`;
+  const cacheKey = `${user.role}:${user.shopId || 'all'}:${year}:statisticalRevenueByYear`;
   const resultCache = await cacheService.get(cacheKey);
   if (resultCache) return resultCache;
 
   const allQuarters = generateQuarterRange(startDate, endDate);
+  const matchCondition = {
+    createdAt: {
+      $gte: startDate,
+      $lte: endDate,
+    },
+  };
+
+  if (user.role === 'shop' && user.shopId) {
+    matchCondition.shopId = user.shopId;
+  }
+
   const pipelineByQuarter = [
     {
-      $match: {
-        createdAt: {
-          $gte: startDate,
-          $lte: endDate,
-        },
-      },
+      $match: matchCondition,
     },
     {
       $group: {
@@ -196,21 +214,27 @@ const mergeRevenueWithAllQuarters = (revenueByQuarter, allQuarters) => {
   return result;
 };
 
-const statisticalRevenueByYear = async (year) => {
+const statisticalRevenueByYear = async (year, user) => {
   const startDate = new Date(`${year}-01-01`);
   const endDate = new Date(`${year}-12-31`);
-  const cacheKey = `${year}:statisticalRevenueByYear`;
+  const cacheKey = `${user.role}:${user.shopId || 'all'}:${year}:statisticalRevenueByYear`;
   const resultCache = await cacheService.get(cacheKey);
   if (resultCache) return resultCache;
 
+  const matchCondition = {
+    createdAt: {
+      $gte: startDate,
+      $lte: endDate,
+    },
+  };
+
+  if (user.role === 'shop' && user.shopId) {
+    matchCondition.shopId = user.shopId;
+  }
+
   const pipelineByMonth = [
     {
-      $match: {
-        createdAt: {
-          $gte: startDate,
-          $lte: endDate,
-        },
-      },
+      $match: matchCondition,
     },
     {
       $group: {
@@ -257,24 +281,28 @@ const formatMonth = (month) => {
   return monthNames[month - 1];
 };
 
-const statisticalPerformanceByDay = async (startDate, endDate) => {
-  // Tạo khóa cache từ startDate và endDate
-  const cacheKey = `${startDate}:${endDate}:statisticalPerformanceByDay`;
+const statisticalPerformanceByDay = async (startDate, endDate, user) => {
+  const cacheKey = `${user.role}:${user.shopId || 'all'}:${startDate}:${endDate}:statisticalPerformanceByDay`;
   const resultCache = await cacheService.get(cacheKey);
   if (resultCache) return resultCache;
 
   const allDates = generatePerformanceDateRange(startDate, endDate);
-
   const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+
+  const matchCondition = {
+    createdAt: {
+      $gte: new Date(startDate),
+      $lte: new Date(endDate),
+    },
+  };
+
+  if (user.role === 'shop' && user.shopId) {
+    matchCondition.shopId = user.shopId;
+  }
 
   const accessesPipeline = [
     {
-      $match: {
-        createdAt: {
-          $gte: new Date(startDate),
-          $lte: new Date(endDate),
-        },
-      },
+      $match: matchCondition,
     },
     {
       $group: {
@@ -291,12 +319,7 @@ const statisticalPerformanceByDay = async (startDate, endDate) => {
 
   const ordersPipeline = [
     {
-      $match: {
-        createdAt: {
-          $gte: new Date(startDate),
-          $lte: new Date(endDate),
-        },
-      },
+      $match: matchCondition,
     },
     {
       $group: {
@@ -354,17 +377,23 @@ const generatePerformanceDateRange = (startDate, endDate) => {
   return dateArray;
 };
 
-const statisticalPerformanceByMonth = async (startMonth, endMonth) => {
-  const cacheKey = `${startMonth}:${endMonth}:statisticalPerformanceByDay`;
+const statisticalPerformanceByMonth = async (startMonth, endMonth, user) => {
+  const cacheKey = `${user.role}:${user.shopId || 'all'}:${startMonth}:${endMonth}:statisticalPerformanceByDay`;
   const cachedResult = await cacheService.get(cacheKey);
   if (cachedResult) return cachedResult;
+
+  const matchCondition = {
+    createdAt: { $gte: new Date(startMonth), $lte: new Date(endMonth) },
+  };
+
+  if (user.role === 'shop' && user.shopId) {
+    matchCondition.shopId = user.shopId;
+  }
 
   const getDailyAggregateData = async (model, field, countOrders = false) => {
     return await model.aggregate([
       {
-        $match: {
-          createdAt: { $gte: new Date(startMonth), $lte: new Date(endMonth) },
-        },
+        $match: matchCondition,
       },
       {
         $group: {
@@ -421,21 +450,27 @@ const mergeDailyData = (accessData, orderData, startMonth, endMonth) => {
   return mergedResults;
 };
 
-const statisticalPerformanceByQuarter = async (year) => {
+const statisticalPerformanceByQuarter = async (year, user) => {
   const startDate = new Date(`${year}-01-01`);
   const endDate = new Date(`${year}-12-31`);
-  const cacheKey = `${startDate}:${endDate}:statisticalPerformanceByQuarter`;
+  const cacheKey = `${user.role}:${user.shopId || 'all'}:${startDate}:${endDate}:statisticalPerformanceByQuarter`;
   const resultCache = await cacheService.get(cacheKey);
   if (resultCache) return resultCache;
 
+  const matchCondition = {
+    createdAt: {
+      $gte: startDate,
+      $lte: endDate,
+    },
+  };
+
+  if (user.role === 'shop' && user.shopId) {
+    matchCondition.shopId = user.shopId;
+  }
+
   const accessPipeline = [
     {
-      $match: {
-        createdAt: {
-          $gte: startDate,
-          $lte: endDate,
-        },
-      },
+      $match: matchCondition,
     },
     {
       $group: {
@@ -464,12 +499,7 @@ const statisticalPerformanceByQuarter = async (year) => {
 
   const ordersPipeline = [
     {
-      $match: {
-        createdAt: {
-          $gte: startDate,
-          $lte: endDate,
-        },
-      },
+      $match: matchCondition,
     },
     {
       $group: {
@@ -520,21 +550,27 @@ const mergeDataByQuarter = (accessData, orderData, allQuarters) => {
   return mergedResults;
 };
 
-const statisticalPerformanceByYear = async (year) => {
+const statisticalPerformanceByYear = async (year, user) => {
   const startDate = new Date(`${year}-01-01`);
   const endDate = new Date(`${year}-12-31`);
-  const cacheKey = `${startDate}:${endDate}:statisticalPerformanceByYear`;
+  const cacheKey = `${user.role}:${user.shopId || 'all'}:${startDate}:${endDate}:statisticalPerformanceByYear`;
   const resultCache = await cacheService.get(cacheKey);
   if (resultCache) return resultCache;
 
+  const matchCondition = {
+    createdAt: {
+      $gte: startDate,
+      $lte: endDate,
+    },
+  };
+
+  if (user.role === 'shop' && user.shopId) {
+    matchCondition.shopId = user.shopId;
+  }
+
   const accessPipeline = [
     {
-      $match: {
-        createdAt: {
-          $gte: startDate,
-          $lte: endDate,
-        },
-      },
+      $match: matchCondition,
     },
     {
       $group: {
@@ -552,12 +588,7 @@ const statisticalPerformanceByYear = async (year) => {
 
   const ordersPipeline = [
     {
-      $match: {
-        createdAt: {
-          $gte: startDate,
-          $lte: endDate,
-        },
-      },
+      $match: matchCondition,
     },
     {
       $group: {

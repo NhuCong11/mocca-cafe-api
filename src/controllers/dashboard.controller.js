@@ -16,12 +16,12 @@ const statisticalData = catchAsync(async (req, res) => {
 });
 
 const statisticalRevenue = catchAsync(async (req, res) => {
-  const result = await dashboardService.statisticalRevenue(req.body);
+  const result = await dashboardService.statisticalRevenue(req.body, req.user);
   res.status(httpStatus.OK).json(response(httpStatus.OK, dashboardMessage().STATISTICAL_REVENUE, result));
 });
 
 const statisticalPerformance = catchAsync(async (req, res) => {
-  const result = await dashboardService.statisticalPerformance(req.body);
+  const result = await dashboardService.statisticalPerformance(req.body, req.user);
   res.status(httpStatus.OK).json(response(httpStatus.OK, dashboardMessage().STATISTICAL_PERFORMANCE, result));
 });
 

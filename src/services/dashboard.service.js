@@ -166,7 +166,7 @@ const statisticalData = async (reqBody, user) => {
   return results;
 };
 
-const statisticalRevenue = async (reqBody) => {
+const statisticalRevenue = async (reqBody, user) => {
   const { statisticalBy } = reqBody;
 
   let year;
@@ -177,28 +177,30 @@ const statisticalRevenue = async (reqBody) => {
       return statisticalRevenueByDay(
         new Date(endDate.getFullYear(), endDate.getMonth(), endDate.getDate() - 6),
         new Date(endDate.getFullYear(), endDate.getMonth(), endDate.getDate()),
+        user,
       );
     case 'week':
       return statisticalRevenueByDay(
         new Date(endDate.getFullYear(), endDate.getMonth(), endDate.getDate() - endDate.getDay() + 1),
         new Date(endDate.getFullYear(), endDate.getMonth(), endDate.getDate() - endDate.getDay() + 7),
+        user,
       );
     case 'month':
       startDate.setMonth(endDate.getMonth() - 2);
-      return statisticalRevenueByMonth(startDate, new Date(endDate.getFullYear(), endDate.getMonth() + 1, 0));
+      return statisticalRevenueByMonth(startDate, new Date(endDate.getFullYear(), endDate.getMonth() + 1, 0), user);
     case 'quarter':
       year = endDate.getFullYear();
-      return statisticalRevenueByQuarter(year);
+      return statisticalRevenueByQuarter(year, user);
     case 'year':
       year = endDate.getFullYear();
-      return statisticalRevenueByYear(year);
+      return statisticalRevenueByYear(year, user);
     default:
       year = endDate.getFullYear();
-      return statisticalRevenueByYear(year);
+      return statisticalRevenueByYear(year, user);
   }
 };
 
-const statisticalPerformance = async (reqBody) => {
+const statisticalPerformance = async (reqBody, user) => {
   const { statisticalBy } = reqBody;
 
   let startDate, endDate;
@@ -207,24 +209,24 @@ const statisticalPerformance = async (reqBody) => {
     case 'day':
       startDate = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 6);
       endDate = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-      return statisticalPerformanceByDay(startDate, endDate);
+      return statisticalPerformanceByDay(startDate, endDate, user);
     case 'week':
       startDate = new Date(now.getFullYear(), now.getMonth(), now.getDate() - now.getDay() + 1);
       endDate = new Date(now.getFullYear(), now.getMonth(), now.getDate() - now.getDay() + 7);
-      return statisticalPerformanceByDay(startDate, endDate);
+      return statisticalPerformanceByDay(startDate, endDate, user);
     case 'month':
       startDate = new Date(now.getFullYear(), now.getMonth(), 1);
       endDate = new Date(now.getFullYear(), now.getMonth() + 1, 0);
-      return statisticalPerformanceByMonth(startDate, endDate);
+      return statisticalPerformanceByMonth(startDate, endDate, user);
     case 'quarter':
       year = now.getFullYear();
-      return statisticalPerformanceByQuarter(year);
+      return statisticalPerformanceByQuarter(year, user);
     case 'year':
       year = now.getFullYear();
-      return statisticalPerformanceByYear(year);
+      return statisticalPerformanceByYear(year, user);
     default:
       year = now.getFullYear();
-      return statisticalPerformanceByYear(year);
+      return statisticalPerformanceByYear(year, user);
   }
 };
 

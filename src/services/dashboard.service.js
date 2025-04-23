@@ -236,9 +236,12 @@ const getTopSellingProducts = async (user) => {
 
   if (resultCache) return resultCache;
 
-  const matchCondition = {};
+  const matchCondition = {
+    status: 'success',
+  };
+
   if (user.role === 'shop' && user.shopId) {
-    matchCondition.shopId = user.shopId;
+    matchCondition.shop = user.shopId;
   }
 
   const result = await Order.aggregate([
@@ -246,19 +249,23 @@ const getTopSellingProducts = async (user) => {
       $match: matchCondition,
     },
     {
-      $unwind: '$products',
+      $unwind: '$cartDetails',
     },
     {
-      $group: {
-        _id: '$products.productId',
-        totalQuantity: { $sum: '$products.quantity' },
-        totalRevenue: { $sum: { $multiply: ['$products.price', '$products.quantity'] } },
+      $lookup: {
+        from: 'cartdetails',
+        localField: 'cartDetails',
+        foreignField: '_id',
+        as: 'cartDetailInfo',
       },
+    },
+    {
+      $unwind: '$cartDetailInfo',
     },
     {
       $lookup: {
         from: 'products',
-        localField: '_id',
+        localField: 'cartDetailInfo.product',
         foreignField: '_id',
         as: 'productInfo',
       },
@@ -267,12 +274,12 @@ const getTopSellingProducts = async (user) => {
       $unwind: '$productInfo',
     },
     {
-      $project: {
-        _id: 1,
-        name: '$productInfo.name',
-        image: '$productInfo.image',
-        totalQuantity: 1,
-        totalRevenue: 1,
+      $group: {
+        _id: '$cartDetailInfo.product',
+        name: { $first: '$productInfo.name' },
+        image: { $first: '$productInfo.image' },
+        totalQuantity: { $sum: '$cartDetailInfo.quantity' },
+        totalRevenue: { $sum: { $multiply: ['$cartDetailInfo.totalPrice', 1] } },
       },
     },
     {

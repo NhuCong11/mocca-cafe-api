@@ -49,6 +49,10 @@ const statisticalData = async (reqBody) => {
   let startDate, endDate;
   const now = new Date();
   switch (statisticalBy) {
+    case 'day':
+      startDate = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 6);
+      endDate = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+      break;
     case 'week':
       startDate = new Date(now.getFullYear(), now.getMonth(), now.getDate() - now.getDay() + 1);
       endDate = new Date(now.getFullYear(), now.getMonth(), now.getDate() - now.getDay() + 7);
@@ -193,6 +197,10 @@ const statisticalPerformance = async (reqBody) => {
   let startDate, endDate;
   const now = new Date();
   switch (statisticalBy) {
+    case 'day':
+      startDate = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 6);
+      endDate = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+      return statisticalPerformanceByDay(startDate, endDate);
     case 'week':
       startDate = new Date(now.getFullYear(), now.getMonth(), now.getDate() - now.getDay() + 1);
       endDate = new Date(now.getFullYear(), now.getMonth(), now.getDate() - now.getDay() + 7);

@@ -43,7 +43,7 @@ const statisticalUserByRole = async () => {
 
   return result;
 };
-const statisticalData = async (reqBody) => {
+const statisticalData = async (reqBody, user) => {
   const { statisticalBy } = reqBody;
 
   let startDate, endDate;
@@ -78,12 +78,24 @@ const statisticalData = async (reqBody) => {
   }
 
   endDate = new Date(endDate.setHours(23, 59, 59, 999));
-  const cacheKey = `${startDate.toISOString()}:${endDate.toISOString()}:statisticalData`;
+  const cacheKey = `${user.role}:${user.shopId || 'all'}:${startDate.toISOString()}:${endDate.toISOString()}:statisticalData`;
   const resultCache = await cacheService.get(cacheKey);
 
   if (resultCache) return resultCache;
 
   const allPossibleStatuses = Order.schema.path('status').enumValues;
+
+  // Thêm điều kiện lọc theo shop nếu không phải admin
+  const matchCondition = {
+    createdAt: {
+      $gte: startDate,
+      $lte: endDate,
+    },
+  };
+
+  if (user.role !== 'admin' && user.shopId) {
+    matchCondition.shopId = user.shopId;
+  }
 
   const collections = {
     sales: {
@@ -118,12 +130,7 @@ const statisticalData = async (reqBody) => {
   for (const [key, { collection, groupField, totalField }] of Object.entries(collections)) {
     const data = await collection.aggregate([
       {
-        $match: {
-          createdAt: {
-            $gte: startDate,
-            $lte: endDate,
-          },
-        },
+        $match: matchCondition,
       },
       key === 'statusOrder'
         ? {

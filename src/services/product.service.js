@@ -90,6 +90,8 @@ const getProductsByKeyword = async (requestQuery) => {
     sortBy = SORT_DEFAULT_STRING,
     shop,
     category,
+    minPrice,
+    maxPrice,
   } = requestQuery;
 
   const sort = sortBy.split(',').map((sortItem) => {
@@ -124,6 +126,24 @@ const getProductsByKeyword = async (requestQuery) => {
   if (category) {
     if (!query.$and) query.$and = [];
     query.$and.push({ category });
+  }
+
+  // Add price range filter if provided
+  if (minPrice !== undefined || maxPrice !== undefined) {
+    const priceFilter = {};
+
+    if (minPrice !== undefined) {
+      priceFilter.$gte = Number(minPrice);
+    }
+
+    if (maxPrice !== undefined) {
+      priceFilter.$lte = Number(maxPrice);
+    }
+
+    if (Object.keys(priceFilter).length > 0) {
+      if (!query.$and) query.$and = [];
+      query.$and.push({ price: priceFilter });
+    }
   }
 
   const skip = +page <= 1 ? 0 : (+page - 1) * +limit;

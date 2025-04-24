@@ -21,6 +21,8 @@ const getProducts = {
     limit: Joi.number().integer(),
     page: Joi.number().integer(),
     lang: Joi.string(),
+    minPrice: Joi.number().integer().min(0),
+    maxPrice: Joi.number().integer().min(0),
   }),
 };
 

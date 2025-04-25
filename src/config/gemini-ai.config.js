@@ -5,7 +5,18 @@ const { env } = require('../config');
 const ApiError = require('../utils/ApiError');
 
 const chatHistory = [];
-const genAI = new GoogleGenerativeAI(env.googleAIApiKey);
+
+// Initialize the Gemini API with error handling
+let genAI;
+try {
+  if (!env.googleAIApiKey) {
+    console.error('Missing GOOGLE_AI_API_KEY in environment variables');
+    throw new Error('Google AI API key is not configured');
+  }
+  genAI = new GoogleGenerativeAI(env.googleAIApiKey);
+} catch (error) {
+  console.error('Failed to initialize Gemini AI:', error);
+}
 
 const GENERATION_CONFIG = {
   temperature: 0.9,
@@ -22,11 +33,20 @@ const SAFETY_SETTINGS = [
 ];
 
 const startChat = () => {
-  return genAI.getGenerativeModel({ model: 'gemini-pro' }).startChat({
-    history: chatHistory,
-    generationConfig: GENERATION_CONFIG,
-    safetySettings: SAFETY_SETTINGS,
-  });
+  if (!genAI) {
+    throw new ApiError(httpStatus.INTERNAL_SERVER_ERROR, 'Gemini AI not initialized properly');
+  }
+
+  try {
+    return genAI.getGenerativeModel({ model: 'gemini-pro' }).startChat({
+      history: chatHistory,
+      generationConfig: GENERATION_CONFIG,
+      safetySettings: SAFETY_SETTINGS,
+    });
+  } catch (error) {
+    console.error('Error starting chat:', error);
+    throw new ApiError(httpStatus.INTERNAL_SERVER_ERROR, `Failed to start chat: ${error.message}`);
+  }
 };
 
 const addToHistory = async (role, message) => {

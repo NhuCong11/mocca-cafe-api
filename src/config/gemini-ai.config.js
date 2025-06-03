@@ -38,7 +38,7 @@ const startChat = () => {
   }
 
   try {
-    return genAI.getGenerativeModel({ model: 'gemini-1.5-pro' }).startChat({
+    return genAI.getGenerativeModel({ model: 'gemini-pro' }).startChat({
       history: chatHistory,
       generationConfig: GENERATION_CONFIG,
       safetySettings: SAFETY_SETTINGS,

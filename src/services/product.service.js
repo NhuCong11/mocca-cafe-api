@@ -113,6 +113,7 @@ const getProductsByKeyword = async (requestQuery) => {
           { description: { $regex: new RegExp(keyword, 'i') } },
         ],
       },
+      { deletedAt: null }, // Ensure we only get non-deleted products
     ];
   }
 
@@ -228,7 +229,9 @@ const deleteProductById = async (productId, shop) => {
     throw new ApiError(httpStatus.FORBIDDEN, authMessage().FORBIDDEN);
   }
 
-  await product.deleteOne();
+  // await product.deleteOne();
+  product.deletedAt = new Date();
+  await product.save();
 
   cacheService.del('{"limit":10,"page":1}');
 
